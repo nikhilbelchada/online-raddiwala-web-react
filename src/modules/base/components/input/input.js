@@ -7,7 +7,6 @@ const input = (props) => {
   if(props.errorMessage) {
     classes.push("invalid");
   }
-  console.log(classes);
 
   return (
     <div className={divClasses.join(" ")}>

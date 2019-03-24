@@ -1,16 +1,35 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
-import './App.css';
+import * as actions from './modules/auth/actions/actions';
+import allRoutes from './routes';
 
-import Login from './modules/auth/containers/login/login';
 
 class App extends Component {
+  componentDidMount () {
+    this.props.autoLogin();
+  }
+
   render() {
     return (
-      <Login />
+      <div>
+        {allRoutes(this.props.isAuthenticated)}
+      </div>
     );
   }
 }
 
-export default withRouter(App);
+const mapStateToProps = state => {
+  return {
+    isAuthenticated: state.authStatus.token
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    autoLogin: () => dispatch( actions.autoLoginAction() )
+  };
+};
+
+export default withRouter( connect( mapStateToProps, mapDispatchToProps )( App ) );

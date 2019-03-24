@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
+
+import * as actions from '../../actions/actions';
 
 import Input from '../../../base/components/input/input';
 import Form from '../../../base/components/form/form';
@@ -13,7 +16,9 @@ import CardContent from '../../../base/components/card/content/content';
 import CardTitle from '../../../base/components/card/title/title';
 import CardAction from '../../../base/components/card/action/action';
 
-class App extends Component {
+import Aux from '../../../hoc/aux';
+
+class Login extends Component {
   state = {
     username: "",
     password: "",
@@ -22,9 +27,9 @@ class App extends Component {
 
   submit = (event) => {
     if(this.validate()) {
-      console.log("Valid");
+      const {username, password} = this.state;
+      this.props.onAuth(username, password);
     }
-    console.log("failed");
   }
 
   buildForm() {
@@ -57,10 +62,9 @@ class App extends Component {
     )
   }
 
-  render() {
+  renderLoginForm() {
     return (
-      <Container>
-
+      <Aux>
         <Row>
           <h2 className="center-align teal-text">Online Raddiwala</h2>
         </Row>
@@ -86,6 +90,15 @@ class App extends Component {
           </Column>
 
         </Row>
+      </Aux>
+    );
+  }
+
+  render() {
+    return (
+      <Container>
+        {this.props.isAuthenticated ? <Redirect to="/" /> : this.renderLoginForm()}
+
 
       </Container>
     )
@@ -120,4 +133,16 @@ class App extends Component {
   }
 }
 
-export default withRouter(App);
+const mapStateToProps = state => {
+  return {
+    isAuthenticated: state.authStatus.token
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+      onAuth: (username, password) => dispatch(actions.loginAction(username, password)),
+    };
+};
+
+export default connect( mapStateToProps, mapDispatchToProps )( Login );
