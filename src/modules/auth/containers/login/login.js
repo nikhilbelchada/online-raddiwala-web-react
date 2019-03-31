@@ -4,25 +4,29 @@ import { Redirect } from 'react-router-dom';
 
 import * as actions from '../../actions/actions';
 
-import Input from '../../../base/components/input/input';
-import Form from '../../../base/components/form/form';
-import Container from '../../../base/components/container/container';
-import Button from '../../../base/components/button/button';
-import Column from '../../../base/components/column/column';
-import Row from '../../../base/components/row/row';
-
-import Card from '../../../base/components/card/card';
-import CardContent from '../../../base/components/card/content/content';
-import CardTitle from '../../../base/components/card/title/title';
-import CardAction from '../../../base/components/card/action/action';
-
-import Aux from '../../../hoc/aux';
+import {
+  Input,
+  Form,
+  Container,
+  Button,
+  Column,
+  Row,
+  Card,
+  CardContent,
+  CardTitle,
+  CardAction ,
+  Aux,
+} from '../../../base/components'
 
 class Login extends Component {
   state = {
     username: "",
     password: "",
     errors: {}
+  }
+
+  componentDidMount() {
+    window.M.updateTextFields();
   }
 
   submit = (event) => {
@@ -44,6 +48,7 @@ class Login extends Component {
             onChange={(event) => this.setState({username: event.target.value})}
             divClasses={["s12"]}
             errorMessage={this.state.errors.username}
+            placeholder="Enter Username"
             />
         </Row>
         <Row>
@@ -55,6 +60,7 @@ class Login extends Component {
             value={this.state.password}
             onChange={(event) => this.setState({password: event.target.value})}
             divClasses={["s12"]}
+            placeholder="Enter Password"
             errorMessage={this.state.errors.password}
             />
         </Row>
@@ -97,8 +103,9 @@ class Login extends Component {
   render() {
     return (
       <Container>
-        {this.props.isAuthenticated ? <Redirect to="/" /> : this.renderLoginForm()}
-
+        {
+          this.props.isAuthenticated ?  <Redirect to="/" /> : this.renderLoginForm()
+        }
 
       </Container>
     )

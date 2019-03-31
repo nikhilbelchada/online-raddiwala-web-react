@@ -1,60 +1,49 @@
 import customAxios from '../axios';
 
 export class Http {
-  static get(requestUrl, params) {
+  static getHeader(passToken=true) {
+    let header = { 'Content-Type': 'application/json' }
+
+    if(passToken) {
+      header.Authorization = 'Token ' + localStorage.getItem("token");
+    }
+
+    return header;
+  }
+  static get(requestUrl, params, passToken=true) {
     if (!params) params = {};
     return customAxios({
       url: requestUrl,
       method: 'get',
       params: params,
-      withCredentials: false,
+      headers: this.getHeader(passToken),
     });
   }
 
-  static post(url, data) {
+  static post(url, data, passToken=true) {
     return customAxios({
       url: url,
       method: 'post',
       data: data,
+      headers: this.getHeader(passToken),
     });
   }
 
-  static delete(url, data) {
+  static delete(url, data, passToken=true) {
     return customAxios({
       url: url,
       method: 'delete',
-      data: data
+      data: data,
+      headers: this.getHeader(passToken),
     });
   }
 
-  static put(url, data) {
+  static put(url, data, passToken=true) {
     return customAxios({
       url: url,
       method: 'put',
-      data: data
+      data: data,
+      headers: this.getHeader(passToken),
     });
   }
-
-  static startSpinner() {
-    var element = document.getElementById('spinner-div');
-    if(!element) return;
-    element.style.display = "block";
-  }
-  static stopSpinner() {
-    var element = document.getElementById('spinner-div');
-    if(!element) return;
-    element.style.display = "none";
-  }
-
-  static displayMessage(message) {
-    var element = document.getElementById("snackbar")
-
-    element.className = "show";
-    element.innerText = message;
-    setTimeout(function(){
-      element.className = element.className.replace("show", "");
-      element.innerText = "";
-    }, 3000);
-  }
-
 }

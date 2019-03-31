@@ -2,7 +2,7 @@ import React from 'react';
 
 const input = (props) => {
   const classes = props.classes || [];
-  const divClasses = ["input-field", "col"].concat(props.divClasses || []);
+  const divClasses = ["input-field", "col", "active"].concat(props.divClasses || []);
 
   if(props.errorMessage) {
     classes.push("invalid");
@@ -14,9 +14,10 @@ const input = (props) => {
       <input
         id={props.id}
         value={props.value}
-        placeholder={props.placeholder}
+        placeholder={props.placeholder || "Add Placeholder"}
         type={props.type || "text"}
         onChange={props.onChange}
+        disabled={props.disabled || false}
         className={classes.join(" ")}/>
 
       <label

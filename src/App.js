@@ -5,6 +5,9 @@ import { withRouter } from 'react-router-dom';
 import * as actions from './modules/auth/actions/actions';
 import allRoutes from './routes';
 
+import {Snackbar} from './modules/base/components/snackbar/snackbar';
+import {Spinner} from './modules/base/components/spinner/spinner';
+
 
 class App extends Component {
   componentDidMount () {
@@ -14,7 +17,9 @@ class App extends Component {
   render() {
     return (
       <div>
-        {allRoutes(this.props.isAuthenticated)}
+        {<Snackbar />}
+        {<Spinner/>}
+        {allRoutes(this.props.isAuthenticated, this.props.location.pathname)}
       </div>
     );
   }

@@ -2,6 +2,6 @@ import {ROOT_URL} from '../../utils/constants';
 
 export const API_URL = {
   login: () => {
-    return `${ROOT_URL}api-token-auth/`;
+    return `${ROOT_URL}mauth/api-token-auth/`;
   },
 }

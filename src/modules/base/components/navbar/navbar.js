@@ -7,7 +7,7 @@ const navbar = (props) => (
   <nav>
     <div className="nav-wrapper teal darket-4">
       <NavLink to="/" className="brand-logo">Online Raddiwala</NavLink>
-      <NavItems />
+      <NavItems isAdmin={props.isAdmin} username={props.username}/>
     </div>
   </nav>
 );

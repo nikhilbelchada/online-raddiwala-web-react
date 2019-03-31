@@ -3,15 +3,21 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 
 import Login from './modules/auth/containers/login/login';
 import Logout from './modules/auth/containers/logout/logout';
-import Home from './modules/home/components/home/home';
+import Home from './modules/home/containers/home/home';
 
-const allRoutes = (isAuthenticated) => {
+const allRoutes = (isAuthenticated, requestPath) => {
   if(isAuthenticated) {
     return (
       <Switch>
-        <Route path="/" exact component={Home} />
         <Route path="/logout" exact component={Logout} />
+        <Route path="/" component={Home} />
         <Redirect to="/" />
+      </Switch>
+    );
+  } else if(isAuthenticated === undefined) {
+    return (
+      <Switch>
+        <Redirect to={requestPath} />
       </Switch>
     );
   } else {
