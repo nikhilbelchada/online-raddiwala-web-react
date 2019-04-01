@@ -11,7 +11,7 @@ import {Spinner} from './modules/base/components/spinner/spinner';
 
 class App extends Component {
   componentDidMount () {
-    this.props.autoLogin();
+    this.props.autoLogin(this.props.history);
   }
 
   render() {
@@ -25,16 +25,11 @@ class App extends Component {
   }
 }
 
-const mapStateToProps = state => {
+
+export default withRouter(connect(state => {
   return {
     isAuthenticated: state.authStatus.token
   };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    autoLogin: () => dispatch( actions.autoLoginAction() )
-  };
-};
-
-export default withRouter( connect( mapStateToProps, mapDispatchToProps )( App ) );
+}, {
+  autoLogin: actions.autoLoginAction,
+})( App ) );

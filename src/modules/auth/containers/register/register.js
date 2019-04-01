@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import * as actions from '../../actions/actions';
@@ -14,26 +14,29 @@ import {
   CardContent,
   CardTitle,
   CardAction ,
+  Aux,
 } from '../../../base/components'
 
-import {getUserDetails} from '../../../auth/actions/actions';
-
-class Profile extends Component {
+class Register extends Component {
   state = {
-    id: null,
-    username: '',
-    first_name: '',
-    last_name: '',
-    phone: '',
-    address: '',
-    email: '',
+    username: "",
+    password: "",
+    confirm_password: "",
+    phone: "",
+    email: "",
+    address: "",
     errors: {}
   }
 
   componentDidMount() {
-    const userDetails = getUserDetails();
-    this.setState({...userDetails})
     window.M.updateTextFields();
+  }
+
+  submit = (event) => {
+    if(this.validate()) {
+      const {username, password, email, address, phone} = this.state;
+      this.props.register({username, password, email, address, phone}, this.props.history);
+    }
   }
 
   buildForm() {
@@ -45,32 +48,36 @@ class Profile extends Component {
             label="Username"
             for="username"
             value={this.state.username}
-            disabled
+            onChange={(event) => this.setState({username: event.target.value})}
             divClasses={["s12"]}
+            errorMessage={this.state.errors.username}
+            placeholder="Enter Username"
             />
         </Row>
         <Row>
           <Input
-            id="first_name"
-            label="First Name"
-            for="first_name"
-            placeholder="Enter First Name"
-            value={this.state.first_name}
-            onChange={(event) => this.setState({first_name: event.target.value})}
+            id="password"
+            label="Password"
+            for="password"
+            type="password"
+            value={this.state.password}
+            onChange={(event) => this.setState({password: event.target.value})}
             divClasses={["s12"]}
-            errorMessage={this.state.errors.first_name}
+            placeholder="Enter Password"
+            errorMessage={this.state.errors.password}
             />
         </Row>
         <Row>
           <Input
-            id="last_name"
-            label="Last Name"
-            for="last_name"
-            placeholder="Enter Last Name"
-            value={this.state.last_name}
-            onChange={(event) => this.setState({last_name: event.target.value})}
+            id="confirmpassword"
+            label="Confirm Password"
+            for="confirmpassword"
+            type="password"
+            value={this.state.confirm_password}
+            onChange={(event) => this.setState({confirm_password: event.target.value})}
             divClasses={["s12"]}
-            errorMessage={this.state.errors.last_name}
+            placeholder="Enter Confirm Password"
+            errorMessage={this.state.errors.confirm_password}
             />
         </Row>
         <Row>
@@ -114,18 +121,11 @@ class Profile extends Component {
     )
   }
 
-  submit = (event) => {
-    if(this.validate()) {
-      const {id, username, first_name, last_name, address, phone, email} = this.state;
-      this.props.updateDetails({id, username, first_name, last_name, address, phone, email});
-    }
-  }
-
-  render() {
+  renderRegisterForm() {
     return (
-      <Container>
+      <Aux>
         <Row>
-          <h2 className="center-align teal-text">Profile</h2>
+          <h2 className="center-align teal-text">Register</h2>
         </Row>
 
         <Row>
@@ -134,14 +134,14 @@ class Profile extends Component {
 
             <Card>
               <CardContent>
-                <CardTitle>Update Profile</CardTitle>
+                <CardTitle>Sign Up</CardTitle>
 
                 {this.buildForm()}
 
               </CardContent>
 
               <CardAction>
-                <Button onClick={this.submit}>Update</Button>
+                <Button onClick={this.submit}>Sign Up</Button>
               </CardAction>
 
             </Card>
@@ -149,14 +149,48 @@ class Profile extends Component {
           </Column>
 
         </Row>
-      </Container>
+      </Aux>
     );
   }
 
-  validate = () => {
+  render() {
+    return (
+      <Container>
+        {this.renderRegisterForm()}
+      </Container>
+    )
+  }
+
+  validate () {
     let isValid = true;
-    const {email, address, phone} = this.state;
+    const {username, password, confirm_password, email, address, phone} = this.state;
     let errors = {};
+
+    if(!username) {
+      errors.username = "Username is mandatory";
+      isValid = false;
+    }
+    if(username && username.length < 4) {
+      errors.username = "Mininum 4 characters required";
+      isValid = false;
+    }
+
+    if(!password) {
+      errors.password = "Password is mandatory";
+      isValid = false;
+    }
+    if(password && password.length < 6) {
+      errors.password = "Mininum 6 characters required";
+      isValid = false;
+    }
+    if(!confirm_password) {
+      errors.confirm_password = "Confirm Password is mandatory";
+      isValid = false;
+    }
+    if(confirm_password !== password) {
+      errors.confirm_password = "Confirm Password donot match password";
+      isValid = false;
+    }
 
     if(!/^\S+@\S+$/.test(email)) {
       isValid = false;
@@ -176,22 +210,12 @@ class Profile extends Component {
       errors.phone = "Enter 10 digit phone number";
     }
 
-    this.setState({errors});
-    return isValid;
+    this.setState({errors: errors});
 
+    return isValid;
   }
 }
 
-const mapStateToProps = state => {
-  return { };
-};
-
-const mapDispatchToProps = dispatch => {
-    return {
-      updateDetails: (details) => dispatch(actions.updateAction(details)),
-    };
-};
-
 export default connect(null, {
- updateDetails: actions.updateAction,
-})(Profile);
+  register: actions.registerAction,
+})( Register );

@@ -126,7 +126,7 @@ class Feedback extends Component {
 
   validate = () => {
     let isValid = true;
-    const {id, reply, feedback} = this.state;
+    const {feedback} = this.state;
     let errors = {};
 
     if(!feedback) {

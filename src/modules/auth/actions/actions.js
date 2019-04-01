@@ -29,7 +29,7 @@ export const logoutAction = () => {
   };
 }
 
-export const loginAction = (username, password) => {
+export const loginAction = (username, password, history) => {
   return dispatch => {
     startSpinner();
     dispatch(authStart());
@@ -40,8 +40,8 @@ export const loginAction = (username, password) => {
         stopSpinner();
         localStorage.setItem('token', response.data.token);
         updateUserDetails(response.data.user_details);
-
         dispatch(authSuccess(response.data.token));
+        history.push("/");
       })
       .catch(err => {
         stopSpinner();
@@ -88,5 +88,21 @@ export const autoLoginAction = () => {
     } else {
       dispatch(authSuccess(token));
     }
+  };
+};
+
+export const registerAction = (data, history) => {
+  return dispatch => {
+    startSpinner();
+    Http.post(API_URL.register(), data, false)
+      .then(response => {
+        stopSpinner();
+        history.push("/login");
+        displaySnackbar("Register successful, you can now login");
+      })
+      .catch(err => {
+        stopSpinner();
+        displaySnackbar("Something went wrong");
+      });
   };
 };

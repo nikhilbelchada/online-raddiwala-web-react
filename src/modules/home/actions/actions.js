@@ -14,7 +14,8 @@ export const updateAction = (details) => {
       last_name: details.last_name,
       email: details.email,
       address: details.address,
-      phone: details.phone
+      phone: details.phone,
+      username: details.username,
     };
 
     Http.put(API_URL.user_detail(details.id), userData)

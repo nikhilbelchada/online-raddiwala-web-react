@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Redirect } from 'react-router-dom';
+import Image from '../../images/image.jpg';
 
 import * as actions from '../../actions/actions';
 
@@ -27,12 +27,14 @@ class Login extends Component {
 
   componentDidMount() {
     window.M.updateTextFields();
+    document.body.style.backgroundImage = "url('"+Image+"')";
+    document.body.style.backgroundSize = "cover";
   }
 
   submit = (event) => {
     if(this.validate()) {
       const {username, password} = this.state;
-      this.props.onAuth(username, password);
+      this.props.onAuth(username, password, this.props.history);
     }
   }
 
@@ -72,7 +74,7 @@ class Login extends Component {
     return (
       <Aux>
         <Row>
-          <h2 className="center-align teal-text">Online Raddiwala</h2>
+          <h2 className="center-align white-text">Online Raddiwala</h2>
         </Row>
 
         <Row>
@@ -88,7 +90,8 @@ class Login extends Component {
               </CardContent>
 
               <CardAction>
-                <Button onClick={this.submit}>Sign In</Button>
+                <Button onClick={this.submit}>Sign In</Button> &nbsp;
+                <Button type="link" to="/register">Register</Button>
               </CardAction>
 
             </Card>
@@ -103,10 +106,7 @@ class Login extends Component {
   render() {
     return (
       <Container>
-        {
-          this.props.isAuthenticated ?  <Redirect to="/" /> : this.renderLoginForm()
-        }
-
+        {this.renderLoginForm()}
       </Container>
     )
   }
@@ -140,16 +140,6 @@ class Login extends Component {
   }
 }
 
-const mapStateToProps = state => {
-  return {
-    isAuthenticated: state.authStatus.token
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-    return {
-      onAuth: (username, password) => dispatch(actions.loginAction(username, password)),
-    };
-};
-
-export default connect( mapStateToProps, mapDispatchToProps )( Login );
+export default connect( null, {
+  onAuth: actions.loginAction,
+} )( Login );
