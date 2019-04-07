@@ -5,7 +5,6 @@ import * as actions from '../../actions/actions';
 
 import {
   Container,
-  Button,
   Row,
   Table,
 } from '../../../base/components'
@@ -25,14 +24,6 @@ class Users extends Component {
       <Container>
         <Row>
            <h2 className="center-align teal-text">Users</h2>
-        </Row>
-
-        <Row>
-          <Button
-            type="link"
-            to="/profile/new">
-            Create New
-          </Button>
         </Row>
 
         <Row>

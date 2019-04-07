@@ -71,7 +71,7 @@ class Login extends Component {
     return (
       <Aux>
         <Row>
-          <h2 className="center-align white-text">Online Raddiwala</h2>
+          <h2 className="center-align teal-text">Online Raddiwala</h2>
         </Row>
 
         <Row>
