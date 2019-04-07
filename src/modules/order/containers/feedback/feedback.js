@@ -16,7 +16,6 @@ import {
 
 import { Link } from 'react-router-dom';
 
-import * as authActions from '../../../auth/actions/actions';
 import * as orderActions from '../../../order/actions/actions';
 
 class Feedback extends Component {
@@ -90,7 +89,7 @@ class Feedback extends Component {
   }
 
   render() {
-    const isAdmin = authActions.isAdmin();
+    const isAdmin = this.props.user.admin;
     return (
       <Container>
 
@@ -142,6 +141,7 @@ class Feedback extends Component {
 export default connect(state => {
   return {
     order: state.order.order,
+    user: state.user.profile,
   }
 }, {
   getOrder: orderActions.getOrderAction,

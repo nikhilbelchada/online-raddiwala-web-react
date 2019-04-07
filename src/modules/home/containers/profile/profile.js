@@ -16,7 +16,6 @@ import {
   CardAction ,
 } from '../../../base/components'
 
-import {getUserDetails} from '../../../auth/actions/actions';
 
 class Profile extends Component {
   state = {
@@ -31,9 +30,21 @@ class Profile extends Component {
   }
 
   componentDidMount() {
-    const userDetails = getUserDetails();
-    this.setState({...userDetails})
     window.M.updateTextFields();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const {username, id, address, first_name, last_name, phone, email} = nextProps.user;
+    if(this.state.id !== id) {
+      this.setState({id, username, address, first_name, last_name, phone, email});
+    }
+  }
+
+  componentWillMount() {
+    const {id} = this.props.match.params;
+    if(id && id !== "new") {
+      this.props.getUser(id);
+    }
   }
 
   buildForm() {
@@ -141,7 +152,8 @@ class Profile extends Component {
               </CardContent>
 
               <CardAction>
-                <Button onClick={this.submit}>Update</Button>
+                <Button onClick={this.submit}>Update</Button> &nbsp;
+                <Button type="link" to={"/changepassword/"+this.props.match.params.id}>Change Password</Button>
               </CardAction>
 
             </Card>
@@ -182,16 +194,12 @@ class Profile extends Component {
   }
 }
 
-const mapStateToProps = state => {
-  return { };
-};
-
-const mapDispatchToProps = dispatch => {
-    return {
-      updateDetails: (details) => dispatch(actions.updateAction(details)),
-    };
-};
-
-export default connect(null, {
+export default connect(state => {
+  return {
+    user: state.user.user,
+    profile_user: state.user.profile,
+  };
+}, {
  updateDetails: actions.updateAction,
+ getUser: actions.getUserAction,
 })(Profile);

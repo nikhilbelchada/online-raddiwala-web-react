@@ -24,13 +24,22 @@ import Orders from '../../../order/containers/orders/orders';
 import Feedbacks from '../../../order/containers/feedbacks/feedbacks';
 import Feedback from '../../../order/containers/feedback/feedback';
 
-import * as authActions from '../../../auth/actions/actions';
+import Users from '../../containers/users/users';
+
+import ChangePassword from '../../containers/change_password/change_password';
+
+import Reports from '../../../report/components/reports/reports';
+import OrderReport from '../../../report/containers/order_report/order_report';
+
 
 class Home extends Component {
   render() {
     return (
       <div>
-        <NavBar isAdmin={authActions.isAdmin()} username={authActions.getUserDetails().username}/>
+        <NavBar
+          isAdmin={this.props.user.admin || false}
+          username={this.props.user.username || ""}
+          userid={this.props.user.id}/>
 
         {this.routes()}
       </div>
@@ -41,7 +50,7 @@ class Home extends Component {
     return (
       <Aux>
         <Route path="/" exact component={Landing} />
-        <Route path="/profile" exact component={Profile} />
+        <Route path="/profile/:id" exact component={Profile} />
 
         <Route path="/waste-categories" exact component={WasteCategories} />
         <Route path="/waste-categories/:id" exact component={WasteCategory} />
@@ -56,9 +65,21 @@ class Home extends Component {
 
         <Route path="/feedbacks" exact component={Feedbacks} />
         <Route path="/feedbacks/:id" exact component={Feedback} />
+
+        <Route path="/users" exact component={Users} />
+        <Route path="/users/:id" exact component={Profile} />
+
+        <Route path="/changepassword/:id" exact component={ChangePassword} />
+
+        <Route path="/reports" exact component={Reports} />
+        <Route path="/reports/order" exact component={OrderReport} />
       </Aux>
     );
   }
 }
 
-export default connect(null, null)(Home);
+export default connect(state => {
+  return {
+    user: state.user.profile,
+  };
+}, null)(Home);

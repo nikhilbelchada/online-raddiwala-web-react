@@ -17,7 +17,6 @@ import {
 } from '../../../base/components';
 
 import * as wasteActions from '../../../waste/actions/actions';
-import * as authActions from '../../../auth/actions/actions';
 import * as orderActions from '../../../order/actions/actions';
 import {displaySnackbar} from '../../../base/components';
 
@@ -47,12 +46,14 @@ class Order extends Component {
     const {id, order_items, pickup_date, status, amount_paid} = nextProps.order;
     if(!this.state.id && id && id.toString() === this.props.match.params.id) {
       this.setState({
-        id, order_items, pickup_date: moment(pickup_date).format('YYYY-MM-DDThh:mm:ss'), status, amount_paid
+        id, order_items, pickup_date: moment(pickup_date).format('YYYY-MM-DDTHH:mm:ss'), status, amount_paid
       });
     }
-  }
-
-  componentDidMount() {
+    if(this.state.id && (id !== this.state.id || id === this.state.id)) {
+      this.setState({
+        id, order_items, pickup_date: moment(pickup_date).format('YYYY-MM-DDTHH:mm:ss'), status, amount_paid
+      });
+    }
     window.M.updateTextFields();
   }
 
@@ -126,11 +127,10 @@ class Order extends Component {
   submit = () => {
     if(this.validate()) {
       const {pickup_date, order_items, status, amount_paid, id} = this.state;
-      const userDetails = authActions.getUserDetails();
       this.props.updateOrder({
         pickup_date,
         order_items,
-        user: userDetails.id,
+        user: this.props.user.id,
         status,
         amount_paid,
         id
@@ -139,7 +139,7 @@ class Order extends Component {
   }
 
   render() {
-    const isAdmin = authActions.isAdmin();
+    const isAdmin = this.props.user.admin;
     const statuses = [
       {id: "CREATED", label: "Created", disabled: !isAdmin},
       {id: "ACCEPTED", label: "Accepted", disabled: !isAdmin},
@@ -170,6 +170,7 @@ class Order extends Component {
                     for="pickupdate"
                     min={this.state.minDate}
                     value={this.state.pickup_date}
+                    disabled={['CANCELLED', 'COMPLETE'].indexOf(this.state.status) !== -1}
                     onChange={(event) => this.setState({pickup_date: event.target.value})}
                     divClasses={["s12"]}
                     placeholder="Enter Pickup Datetime"
@@ -183,7 +184,14 @@ class Order extends Component {
                     label="Status"
                     rows={statuses}
                     defaultLabel="Select Status"
-                    onChange={(event) => this.setState({status: event.target.value})}
+                    onChange={(event) => {
+                      const status = event.target.value;
+                      let {amount_paid} = this.state;
+                      if(status !== 'COMPLETE') {
+                        amount_paid = 0.0;
+                      }
+                      this.setState({status, amount_paid});
+                    }}
                     value={this.state.status}
                     errorMessage={this.state.errors.status}
                     />
@@ -197,6 +205,7 @@ class Order extends Component {
                     for="amountpaid"
                     value={this.state.amount_paid}
                     onChange={(event) => this.setState({amount_paid: event.target.value})}
+                    disabled={this.state.status !== 'COMPLETE'}
                     divClasses={["s12"]}
                     placeholder="Enter Amount Paid"
                     errorMessage={this.state.errors.amount_paid}
@@ -265,6 +274,7 @@ export default connect(state => {
   return {
     wastes: state.waste.wastes,
     waste_categories: state.wasteCategory.waste_categories,
+    user: state.user.profile,
     order: state.order.order,
   }
 }, {

@@ -2,6 +2,7 @@ import {Http} from '../../../utils/http';
 import {API_URL} from '../urls';
 import {displaySnackbar, startSpinner, stopSpinner} from '../../base/components';
 import * as actionTypes from './action_types';
+var fileDownload = require('react-file-download');
 
 export function placeOrderAction(data, clearCart) {
   return (dispatch) => {
@@ -12,24 +13,39 @@ export function placeOrderAction(data, clearCart) {
         clearCart();
         displaySnackbar("Placed Successfully");
       })
-      .catch(response => {
+      .catch(err => {
         stopSpinner();
-        displaySnackbar("Something went wrong");
+        displaySnackbar(err.response.data);
       });
   }
 }
 
 
-export function getOrdersAction() {
+export function getOrdersAction(filter={}) {
   return (dispatch) => {
     startSpinner();
-    Http.get(API_URL.orders())
+    Http.get(API_URL.orders(), filter)
       .then(response => {
         stopSpinner();
         dispatch({
           type: actionTypes.ORDER_DETAILS,
           orders: response.data
         })
+      })
+      .catch(response => {
+        stopSpinner();
+        displaySnackbar("Something went wrong");
+      })
+  }
+}
+
+export function downloadOrderReportAction(filter={}) {
+  return (dispatch) => {
+    startSpinner();
+    Http.get(API_URL.download_report(), filter)
+      .then(response => {
+        stopSpinner();
+        fileDownload(response.data, 'export.csv');
       })
       .catch(response => {
         stopSpinner();
@@ -67,7 +83,7 @@ export function updateOrderAction(data, history) {
       })
       .catch(error => {
         stopSpinner();
-        displaySnackbar(error.response.data[0]);
+        displaySnackbar(error.response.data);
       });
   }
 }

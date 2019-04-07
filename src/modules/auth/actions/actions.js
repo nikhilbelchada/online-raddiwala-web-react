@@ -2,6 +2,8 @@ import * as actionTypes from './action_types';
 import {Http} from '../../../utils/http';
 import {API_URL} from '../urls';
 import {displaySnackbar, startSpinner, stopSpinner} from '../../base/components';
+import * as homeActionTypes from '../../home/actions/action_types';
+import {getProfileAction} from '../../home/actions/actions';
 
 export const authStart = () => {
     return { type: actionTypes.AUTH_START };
@@ -39,8 +41,12 @@ export const loginAction = (username, password, history) => {
       .then(response => {
         stopSpinner();
         localStorage.setItem('token', response.data.token);
-        updateUserDetails(response.data.user_details);
+        localStorage.setItem('user_id', response.data.user_details.id);
         dispatch(authSuccess(response.data.token));
+        dispatch({
+          type: homeActionTypes.PROFILE_DETAIL,
+          profile: response.data.user_details,
+        })
         history.push("/");
       })
       .catch(err => {
@@ -51,42 +57,15 @@ export const loginAction = (username, password, history) => {
   };
 };
 
-export const updateUserDetails = (userDetails) => {
-  localStorage.setItem('username', userDetails.username);
-  localStorage.setItem('user_id', userDetails.user_id);
-  localStorage.setItem('first_name', userDetails.first_name || "");
-  localStorage.setItem('last_name', userDetails.last_name || "");
-  localStorage.setItem('phone', userDetails.phone || "");
-  localStorage.setItem('admin', userDetails.admin || false);
-  localStorage.setItem('address', userDetails.address || "");
-  localStorage.setItem('email', userDetails.email || "");
-}
-
-export const getUserDetails = () => {
-  return {
-    id: localStorage.getItem("user_id"),
-    username: localStorage.getItem("username"),
-    first_name: localStorage.getItem("first_name"),
-    last_name: localStorage.getItem("last_name"),
-    phone: localStorage.getItem("phone"),
-    admin: localStorage.getItem("admin"),
-    address: localStorage.getItem("address"),
-    email: localStorage.getItem("email"),
-  }
-}
-
-export const isAdmin = () => {
-  const userDetails = getUserDetails();
-  return userDetails['admin'] === "true" || userDetails['admin'] === true;
-}
-
 export const autoLoginAction = () => {
   return dispatch => {
     const token = localStorage.getItem('token');
-    if (!token) {
+    const user_id = localStorage.getItem('user_id');
+    if (!token || !user_id) {
       dispatch(logout());
     } else {
       dispatch(authSuccess(token));
+      dispatch(getProfileAction(user_id));
     }
   };
 };
@@ -97,8 +76,8 @@ export const registerAction = (data, history) => {
     Http.post(API_URL.register(), data, false)
       .then(response => {
         stopSpinner();
-        history.push("/login");
         displaySnackbar("Register successful, you can now login");
+        history.push("/login");
       })
       .catch(err => {
         stopSpinner();

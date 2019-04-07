@@ -2,8 +2,8 @@
 import {Http} from '../../../utils/http';
 import {API_URL} from '../urls';
 import {displaySnackbar, startSpinner, stopSpinner} from '../../base/components';
+import * as actionTypes from './action_types';
 
-import {updateUserDetails} from '../../auth/actions/actions';
 
 /* Actions */
 export const updateAction = (details) => {
@@ -21,8 +21,11 @@ export const updateAction = (details) => {
     Http.put(API_URL.user_detail(details.id), userData)
       .then(response => {
         stopSpinner();
-        updateUserDetails(response.data.user_details);
         displaySnackbar("Details updated successfully");
+        dispatch({
+          type: actionTypes.USER_DETAIL,
+          user: response.data,
+        })
       })
       .catch(err => {
         stopSpinner();
@@ -31,6 +34,79 @@ export const updateAction = (details) => {
   };
 };
 
+export const changePasswordAction = (details) => {
+  return dispatch => {
+    startSpinner();
+    const data = {
+      old_password: details.old_password,
+      new_password: details.new_password,
+    };
+
+    Http.put(API_URL.change_password(details.id), data)
+      .then(response => {
+        stopSpinner();
+        displaySnackbar("Password updated successfully");
+      })
+      .catch(err => {
+        stopSpinner();
+        displaySnackbar(err.response.data);
+      });
+  };
+};
+
+export function getUsersAction() {
+  return (dispatch) => {
+    startSpinner();
+    Http.get(API_URL.users())
+      .then(response => {
+        stopSpinner();
+        dispatch({
+          type: actionTypes.USER_DETAILS,
+          users: response.data
+        })
+      })
+      .catch(response => {
+        stopSpinner();
+        displaySnackbar("Something went wrong");
+      })
+  }
+}
+
+export function getUserAction(id) {
+  return (dispatch) => {
+    startSpinner();
+    Http.get(API_URL.user_detail(id))
+      .then(response => {
+        stopSpinner();
+        dispatch({
+          type: actionTypes.USER_DETAIL,
+          user: response.data
+        })
+      })
+      .catch(response => {
+        stopSpinner();
+        displaySnackbar("Something went wrong");
+      })
+  }
+}
+
+export function getProfileAction(id) {
+  return (dispatch) => {
+    startSpinner();
+    Http.get(API_URL.user_detail(id))
+      .then(response => {
+        stopSpinner();
+        dispatch({
+          type: actionTypes.PROFILE_DETAIL,
+          profile: response.data
+        })
+      })
+      .catch(response => {
+        stopSpinner();
+        displaySnackbar("Something went wrong");
+      })
+  }
+}
 
 export const setCart = (wastes) => {
   localStorage.setItem("cart", wastes);

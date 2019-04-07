@@ -29,7 +29,7 @@ const table = (props) => {
                     }
                     if(header.type === 'datetime') {
                       return (
-                        <td key={"l-"+header.key}>{moment(row[header.key]).format("YYYY-MM-DDThh:mm:ss")}</td>
+                        <td key={"l-"+header.key}>{moment(row[header.key]).format("YYYY-MM-DDThh:mm:ss a")}</td>
                       )
                     }
                     return (

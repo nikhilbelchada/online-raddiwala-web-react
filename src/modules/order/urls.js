@@ -7,6 +7,9 @@ export const API_URL = {
   orders: () => {
     return `${ROOT_URL}orders/`;
   },
+  download_report: () => {
+    return `${ROOT_URL}orders/download-report`;
+  },
   feedback: (id) => {
     return `${ROOT_URL}orders/feedbacks/${id}/`;
   }

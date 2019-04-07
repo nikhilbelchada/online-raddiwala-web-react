@@ -17,7 +17,6 @@ import {
 
 import * as wasteActions from '../../../waste/actions/actions';
 import * as homeActions from '../../../home/actions/actions';
-import * as authActions from '../../../auth/actions/actions';
 import {displaySnackbar} from '../../../base/components';
 import * as orderActions from '../../../order/actions/actions';
 
@@ -29,9 +28,9 @@ class Cart extends Component {
 
     this.state = {
       items: [],
-      pickup_date: moment().format('YYYY-MM-DDThh:mm:ss'),
+      pickup_date: moment().format('YYYY-MM-DDTHH:mm:ss'),
       errors: {},
-      minDate: moment().format('YYYY-MM-DDThh:mm:ss'),
+      minDate: moment().format('YYYY-MM-DDTHH:mm:ss'),
     };
   }
 
@@ -71,9 +70,6 @@ class Cart extends Component {
         }))
       });
     }
-  }
-
-  componentDidMount() {
     window.M.updateTextFields();
   }
 
@@ -138,14 +134,13 @@ class Cart extends Component {
   submit = () => {
     if(this.validate()) {
       const {pickup_date, items} = this.state;
-      const {id} = authActions.getUserDetails();
       this.props.placeOrder({
         pickup_date,
         order_items: items.map(item => {
           delete(item.id);
           return item;
         }),
-        user: id},
+        user: this.props.user.id},
         this.clearCart
       );
     }
@@ -227,6 +222,7 @@ export default connect(state => {
   return {
     wastes: state.waste.wastes,
     waste_categories: state.wasteCategory.waste_categories,
+    user: state.user.profile,
   }
 }, {
   getWastes: wasteActions.getWastesAction,

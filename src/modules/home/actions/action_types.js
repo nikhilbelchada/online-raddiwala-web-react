@@ -1,0 +1,3 @@
+export const USER_DETAILS = 'USER_DETAILS';
+export const USER_DETAIL = 'USER_DETAIL';
+export const PROFILE_DETAIL = 'PROFILE_DETAIL';

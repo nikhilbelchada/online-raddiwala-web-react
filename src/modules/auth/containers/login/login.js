@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Image from '../../images/image.jpg';
 
 import * as actions from '../../actions/actions';
 
@@ -27,8 +26,6 @@ class Login extends Component {
 
   componentDidMount() {
     window.M.updateTextFields();
-    document.body.style.backgroundImage = "url('"+Image+"')";
-    document.body.style.backgroundSize = "cover";
   }
 
   submit = (event) => {
